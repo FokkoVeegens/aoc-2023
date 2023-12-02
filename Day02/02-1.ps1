@@ -1,6 +1,13 @@
 $data = Get-Content -Path "$PSScriptRoot\sampleinput.txt"
 
+$MaxCubes = @(
+    @{ Color = "red"; Amount = 12 }, 
+    @{ Color = "green"; Amount = 13 }, 
+    @{ Color = "blue"; Amount = 14 }
+)
+$total = 0
 foreach ($line in $data) {
+    $addToTotal = $true
     $null = $line -match 'Game (\d+?)'
     $gameNumber = $matches[1]
     
@@ -19,5 +26,22 @@ foreach ($line in $data) {
             Color = $color
         }
     }
-    Write-Host "Game number $gameNumber : $cubes"
+    
+    # Check if there is an amount of cubes that exceeds the maximum amount of cubes
+    foreach ($cube in $cubes) {
+        # Get max cube for color of current cube
+        $maxCube = $MaxCubes | Where-Object { $_.Color -eq $cube.Color }
+
+        # if cube amount is greater than max cube amount, don't add to total
+        if ($cube.Amount -gt $maxCube.Amount) {
+            Write-Host "Game $gameNumber has too many $($cube.Color) cubes ($($cube.Amount)); max is $($maxCube.Amount)"
+            $addToTotal = $false
+            break
+        }
+    }
+
+    if ($addToTotal) {
+        $total += $gameNumber
+    }
 }
+$total
