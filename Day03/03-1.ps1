@@ -4,7 +4,7 @@ $data = Get-Content -Path "$PSScriptRoot\sampleinput.txt"
 # Match all numbers that consist of 1 or more digits and put them in an array with their coordinates
 $lineNo = 0
 foreach ($line in $data) {
-    $result = [regex]::Matches($data, '\d+')
+    $result = [regex]::Matches($line, '\d+')
     $numbers = foreach ($match in $result) {
         [PSCustomObject]@{
             Number = $match.Value
@@ -18,7 +18,7 @@ foreach ($line in $data) {
 # Match all characters except the . and put them in an array with their coordinates
 $lineNo = 0
 foreach ($line in $data) {
-    $result = [regex]::Matches($data, '[^.]')
+    $result = [regex]::Matches($line, '[\d\#]')
     $characters = foreach ($match in $result) {
         if ([string]::IsNullOrWhiteSpace($match.Value)) {
             continue
@@ -31,7 +31,8 @@ foreach ($line in $data) {
     }
     $lineNo++
 }
-
+$characters
+exit
 # Loop the numbers and add them up, only if there is a character around it in all directions
 $sum = 0
 foreach ($number in $numbers) {
@@ -50,7 +51,7 @@ foreach ($number in $numbers) {
     # Check if there is a character left or right of the number
     $leftright = $characters | Where-Object { `
         $_.Y -eq $number.Y `
-        -and ($_.X -eq $number.X - 1 -or $_.X -eq $number.X + $number.Value.Length)
+        -and ($_.X -eq $number.X - 1 -or $_.X -eq $number.X + $number.Number.Length)
     }
     Write-Host "$number.Number: $rowAbove $rowBelow $leftright"
     if ($rowAbove -or $rowBelow -or $leftright) {
