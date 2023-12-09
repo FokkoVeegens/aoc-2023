@@ -1,4 +1,4 @@
-$data = Get-Content -Path "$PSScriptRoot\sampleinput.txt"
+$data = Get-Content -Path "$PSScriptRoot\input.txt"
 
 function Get-ExtrapolatedNumber ($line) {
     # Split the line into an array of int numbers by using the space as separator
@@ -26,7 +26,7 @@ function Get-ExtrapolatedNumber ($line) {
     return $extrapolatedNumber
 }
 
-[int]$result = 0
+[int]$result = -1
 foreach ($line in $data) {
     $result += Get-ExtrapolatedNumber -line $line
 }
