@@ -8,7 +8,7 @@ function Get-ExtrapolatedNumber ($line) {
     # Keep all arrays in a list
     # loop this until the entire array only inlcudes zeroes and no non-zero numbers
     $differences = @(,$numbers)
-    while (($differences[-1] | Measure-Object -Sum).Sum -ne 0) {
+    while ($differences[-1] | Where-Object { $_ -ne 0 }) {
         $differences += ,@()
         for ($i = 0; $i -lt $numbers.Length - 1; $i++) {
             $differences[-1] += $numbers[$i + 1] - $numbers[$i]
@@ -26,7 +26,7 @@ function Get-ExtrapolatedNumber ($line) {
     return $extrapolatedNumber
 }
 
-[int]$result = -1
+[int]$result = 0
 foreach ($line in $data) {
     $result += Get-ExtrapolatedNumber -line $line
 }
